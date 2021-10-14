@@ -1,0 +1,132 @@
+import React, { useState } from "react";
+import { loginUser } from "../networkRequests/axios/requests/login";
+import { toastError, toastSuccess } from "../utils/commonFuntions";
+
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const _login = async (e) => {
+    e.preventDefault();
+    try {
+      var res = await loginUser(email, password);
+      localStorage.setItem("accessToken", res.data.access.token);
+      localStorage.setItem("refreshToken", res.data.refresh.token);
+      window.location.reload();
+    } catch (err) {
+      console.log(err);
+      toastError(err.message);
+    }
+  };
+
+  // const _login = (e) => {
+  //   e.preventDefault();
+  //   LoginRequest(email, password)
+  //     .then((res) => {
+  //       console.log(res);
+  //       if (res.statusCode == 200) {
+  //         localStorage.setItem(
+  //           "accessToken",
+  //           res.data.token.access.accessToken
+  //         );
+  //         localStorage.setItem(
+  //           "refreshToken",
+  //           res.data.token.refresh.refreshToken
+  //         );
+  //         window.location.reload();
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       toastError(err.response.data.message);
+  //     });
+  // };
+
+  return (
+    <div className="d-flex flex-column flex-root">
+      <div className="login login-4 wizard d-flex flex-column flex-lg-row flex-column-fluid">
+        <div className="login-container order-2 order-lg-1 d-flex flex-center flex-row-fluid px-7 pt-lg-0 pb-lg-0 pt-4 pb-6 bg-white">
+          <div className="login-content d-flex flex-column pt-lg-0 pt-12">
+            <a href="#" className="login-logo pb-xl-20 pb-15">
+              <img
+                src="/assets/media/handyLogo.png"
+                className="max-h-70px"
+                alt
+              />
+            </a>
+
+            <div className="login-form">
+              <form className="form" id="kt_login_singin_form" action>
+                <div className="pb-5 pb-lg-15">
+                  <h3 className="font-weight-bolder text-dark font-size-h2 font-size-h1-lg">
+                    Login
+                  </h3>
+                </div>
+                <div className="form-group">
+                  <label className="font-size-h6 font-weight-bolder text-dark">
+                    Your Email
+                  </label>
+                  <input
+                    placeholder="Your Email"
+                    className="form-control form-control-solid h-auto py-7 px-6 rounded-lg border-0"
+                    //value={email}
+                    type="text"
+                    name="username"
+                    autoComplete="off"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <div className="d-flex justify-content-between mt-n5">
+                    <label className="font-size-h6 font-weight-bolder text-dark pt-5">
+                      Your Password
+                    </label>
+                  </div>
+                  <input
+                    placeholder="Your Password"
+                    className="form-control form-control-solid h-auto py-7 px-6 rounded-lg border-0"
+                    type="password"
+                    name="password"
+                    autoComplete="off"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+
+                <div className="pb-lg-0 pb-5">
+                  <button
+                    onClick={_login}
+                    type="submit"
+                    id="kt_login_singin_form_submit_button"
+                    className="btn btn-primary font-weight-bolder font-size-h6 px-8 py-4 my-3 mr-3"
+                  >
+                    Login
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div className="login-aside order-1 order-lg-2 bgi-no-repeat bgi-position-x-right">
+          <div
+            className="login-conteiner bgi-no-repeat bgi-position-x-right bgi-position-y-bottom"
+            style={{
+              backgroundImage:
+                "url(/assets/media/svg/illustrations/login-visual-4.svg)",
+            }}
+          >
+            <h3 className="pt-lg-40 pl-lg-20 pb-lg-0 pl-10 py-20 m-0 d-flex justify-content-lg-start font-weight-boldest display5 display1-lg text-white">
+              One Name
+              <br />
+              Pannel
+              <br />
+              For You
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
