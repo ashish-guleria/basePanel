@@ -32,7 +32,7 @@ export default function Header() {
               >
                 {/*begin::Logo*/}
                 <NavLink to="/" className="brand-logo">
-                  <h4>One Name</h4>
+                  <h4>{process.env.REACT_APP_PROJECT_NAME}</h4>
                   {/* <img alt="Logo" src="../assets/media/logos/logo-light.png" /> */}
                 </NavLink>
                 {/*end::Logo*/}

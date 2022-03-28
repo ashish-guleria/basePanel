@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
 import { useHistory } from "react-router-dom";
 
-import {
-  userList,
-  blockUser,
-} from "../../networkRequests/axios/requests/users";
+import { userList, blockUser } from "../../networkRequests/users";
 import { userPerPage } from "../../utils/config";
 import { toastError, toastSuccess, loading } from "../../utils/commonFuntions";
 
@@ -20,18 +17,20 @@ export default function UsersListing() {
 
   const pageCount = Math.ceil(userCount / userPerPage);
 
-  // const _GetUsers = async () => {
-  //   try {
-  //     setLoader(true);
-  //     const res = await userList(userPerPage, pageNumber, search);
-  //     setUsers(res.data.users);
-  //     setUserCount(res.data.count);
-  //     setLoader(false);
-  //   } catch (err) {
-  //     toastError(err.response.data.message);
-  //     setLoader(false);
-  //   }
-  // };
+  const _GetUsers = async () => {
+    try {
+      setLoader(true);
+      const res = await userList(userPerPage, pageNumber, search);
+      console.log(res.data.users);
+      setUsers(res.data.users);
+      setUserCount(res.data.count);
+      setLoader(false);
+    } catch (err) {
+      console.log(err);
+      toastError(err);
+      setLoader(false);
+    }
+  };
 
   const onChangePage = ({ selected }) => {
     setpageNumber(selected);
@@ -40,27 +39,21 @@ export default function UsersListing() {
 
   const block = async (userId) => {
     try {
+      setLoader(true);
       const res = await blockUser(userId);
-      
-
-      if (res.statusCode == 200) _GetUsers();
-      if (res.data.isBlocked) {
-        toastError("User successfully blocked");
-      } else {
-        toastSuccess("User successfully unblocked");
-      }
       _GetUsers();
+      toastSuccess(res.message);
+      _GetUsers();
+      setLoader(false);
     } catch (err) {
       console.log(err);
+      setLoader(false);
     }
   };
 
   useEffect(() => {
-    //_GetUsers();
+    _GetUsers();
   }, [pageChange]);
-  useEffect(() => {
-   // _GetUsers();
-  }, []);
 
   return (
     <div className="d-flex flex-column-fluid">
@@ -132,36 +125,22 @@ export default function UsersListing() {
 
           <div className="card-body">
             <div className="table-responsive">
-              <table class="table ">
+              <table className="table ">
                 <thead>
                   <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Phone Number</th>
-                    <th scope="col">University</th>
+                    <th scope="col">Email</th>
                     <th scope="col">Status</th>
+
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* {users.map((m) => (
+                  {users.map((m) => (
                     <tr key={m._id}>
                       <td type onClick={() => history.push(`/users/${m._id}`)}>
-                        {m.name}
+                        {m.email}
                       </td>
-                      <td onClick={() => history.push(`/users/${m._id}`)}>
-                        {m.phoneNumber}
-                      </td>
-                      <td onClick={() => history.push(`/users/${m._id}`)}>
-                        {m.isUniversityVerified ? (
-                          <span class="label label-inline label-light-success font-weight-bold">
-                            verified
-                          </span>
-                        ) : (
-                          <span class="label label-inline label-light-danger font-weight-bold">
-                            Not verified
-                          </span>
-                        )}
-                      </td>
+
                       <td
                         // type="button"
                         onClick={() => {
@@ -169,11 +148,11 @@ export default function UsersListing() {
                         }}
                       >
                         {!m.isBlocked ? (
-                          <span class="label label-inline label-light-success font-weight-bold">
+                          <span className="label label-inline label-light-success font-weight-bold">
                             Active
                           </span>
                         ) : (
-                          <span class="label label-inline label-light-danger font-weight-bold">
+                          <span className="label label-inline label-light-danger font-weight-bold">
                             Blocked
                           </span>
                         )}
@@ -220,9 +199,19 @@ export default function UsersListing() {
                             </svg>
                           </span>
                         </span>
+
+                        <span
+                          className="btn btn-sm btn-default btn-text-primary btn-hover-primary btn-icon mr-2"
+                          title="View profiles"
+                          onClick={() => block(m._id)}
+                        >
+                          <span className="svg-icon svg-icon-md">
+                            <i class="flaticon-eye"></i>
+                          </span>
+                        </span>
                       </td>
                     </tr>
-                  ))} */}
+                  ))}
                 </tbody>
               </table>
             </div>

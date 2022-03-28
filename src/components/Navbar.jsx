@@ -9,7 +9,7 @@ export default function Navbar() {
     >
       <div className="brand flex-column-auto" id="kt_brand">
         <NavLink to="/" className="brand-logo">
-          <h4>One Name</h4>
+          <h4>{process.env.REACT_APP_PROJECT_NAME}</h4>
           {/* <img alt="Logo" src="../assets/media/logos/logo-light.png" /> */}
         </NavLink>
         <button className="brand-toggle btn btn-sm px-0" id="kt_aside_toggle">
@@ -131,7 +131,7 @@ export default function Navbar() {
                 <span className="menu-text">Users</span>
                 <i className="menu-arrow" />
               </a>
-              
+
               <div className="menu-submenu">
                 <ul className="menu-subnav">
                   <li
@@ -151,8 +151,6 @@ export default function Navbar() {
             </li>
 
             {/* users nav end */}
-
-            
           </ul>
         </div>
       </div>

@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  getSingleUser,
-  verifyUniversity,
-} from "../../networkRequests/axios/requests/users";
+import { getSingleUser, verifyUniversity } from "../../networkRequests/users";
 import { toastError, toastSuccess, loading } from "../../utils/commonFuntions";
 
 export default function single(props) {

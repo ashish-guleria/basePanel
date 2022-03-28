@@ -1,48 +1,38 @@
 import React, { useState } from "react";
-import { loginUser } from "../networkRequests/axios/requests/login";
-import { toastError, toastSuccess } from "../utils/commonFuntions";
+import { useHistory } from "react-router-dom";
+import { loginUser } from "../networkRequests/auth";
+import { toastError, toastSuccess, loading } from "../utils/commonFuntions";
 
 export default function Login() {
+  const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loader, setLoader] = useState(false);
 
   const _login = async (e) => {
     e.preventDefault();
+    if (!email) {
+      return toastError("Please enter email");
+    }
+    if (!password) {
+      return toastError("Please enter password");
+    }
     try {
+      setLoader(true);
       var res = await loginUser(email, password);
-      localStorage.setItem("accessToken", res.data.access.token);
-      localStorage.setItem("refreshToken", res.data.refresh.token);
-      window.location.reload();
+      localStorage.setItem("accessToken", res.data.token);
+      history.push("/");
+      setLoader(false);
     } catch (err) {
       console.log(err);
-      toastError(err.message);
+      toastError(err.data.message);
+      setLoader(false);
     }
   };
 
-  // const _login = (e) => {
-  //   e.preventDefault();
-  //   LoginRequest(email, password)
-  //     .then((res) => {
-  //       console.log(res);
-  //       if (res.statusCode == 200) {
-  //         localStorage.setItem(
-  //           "accessToken",
-  //           res.data.token.access.accessToken
-  //         );
-  //         localStorage.setItem(
-  //           "refreshToken",
-  //           res.data.token.refresh.refreshToken
-  //         );
-  //         window.location.reload();
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       toastError(err.response.data.message);
-  //     });
-  // };
-
   return (
     <div className="d-flex flex-column flex-root">
+      {loader ? loading : ""}
       <div className="login login-4 wizard d-flex flex-column flex-lg-row flex-column-fluid">
         <div className="login-container order-2 order-lg-1 d-flex flex-center flex-row-fluid px-7 pt-lg-0 pb-lg-0 pt-4 pb-6 bg-white">
           <div className="login-content d-flex flex-column pt-lg-0 pt-12">
@@ -67,11 +57,9 @@ export default function Login() {
                   </label>
                   <input
                     placeholder="Your Email"
-                    className="form-control form-control-solid h-auto py-7 px-6 rounded-lg border-0"
+                    className="form-control form-control-solid py-7 px-6 rounded-lg border-0"
                     //value={email}
                     type="text"
-                    name="username"
-                    autoComplete="off"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -85,10 +73,8 @@ export default function Login() {
                   </div>
                   <input
                     placeholder="Your Password"
-                    className="form-control form-control-solid h-auto py-7 px-6 rounded-lg border-0"
+                    className="form-control form-control-solid py-7 px-6 rounded-lg border-0"
                     type="password"
-                    name="password"
-                    autoComplete="off"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -98,7 +84,6 @@ export default function Login() {
                   <button
                     onClick={_login}
                     type="submit"
-                    id="kt_login_singin_form_submit_button"
                     className="btn btn-primary font-weight-bolder font-size-h6 px-8 py-4 my-3 mr-3"
                   >
                     Login
@@ -113,12 +98,11 @@ export default function Login() {
           <div
             className="login-conteiner bgi-no-repeat bgi-position-x-right bgi-position-y-bottom"
             style={{
-              backgroundImage:
-                "url(/assets/media/svg/illustrations/login-visual-4.svg)",
+              backgroundImage: "url(/assets/media/login-visual-4.svg)",
             }}
           >
             <h3 className="pt-lg-40 pl-lg-20 pb-lg-0 pl-10 py-20 m-0 d-flex justify-content-lg-start font-weight-boldest display5 display1-lg text-white">
-              One Name
+              {process.env.REACT_APP_PROJECT_NAME}
               <br />
               Pannel
               <br />
